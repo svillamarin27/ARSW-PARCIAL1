@@ -2,6 +2,8 @@ package eci.arsw.covidanalyzer.service;
 
 import eci.arsw.covidanalyzer.model.Result;
 import eci.arsw.covidanalyzer.model.ResultType;
+import java.util.ArrayList;
+import java.util.List;
 
 import java.util.UUID;
 
@@ -14,7 +16,7 @@ public interface ICovidAggregateService {
      * @param type
      * @return
      */
-    boolean aggregateResult(Result result, ResultType type);
+    void aggregateResult(Result result, ResultType type);
 
     /**
      * Get all the results for the specified result type.
@@ -22,7 +24,7 @@ public interface ICovidAggregateService {
      * @param type
      * @return
      */
-    boolean getResult(ResultType type);
+    List<Result> getResult(ResultType type);
 
     /**
      * 
