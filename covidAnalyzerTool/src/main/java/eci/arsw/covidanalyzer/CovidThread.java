@@ -22,6 +22,7 @@ public class CovidThread extends Thread{
     private boolean suspender;
     private AtomicInteger amountOfFilesProcessed;
     
+    
     public CovidThread(List<File> divArchivos, AtomicInteger atomic) {
         
         this.archivos = divArchivos;

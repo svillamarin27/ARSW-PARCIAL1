@@ -19,17 +19,23 @@ import java.util.stream.Stream;
  */
 public class CovidAnalyzerTool {
 
+    
+    
+
     private ResultAnalyzer resultAnalyzer;
     private TestReader testReader;
     private static int amountOfFilesTotal;
     private static AtomicInteger amountOfFilesProcessed;
     private int com,fin,numeroHilos;
+    private boolean suspenderH;
+    private static CovidAnalyzerTool covidAnalyzerTool = new CovidAnalyzerTool();
 
     public CovidAnalyzerTool() {
         resultAnalyzer = new ResultAnalyzer();
         testReader = new TestReader();
         amountOfFilesProcessed = new AtomicInteger();
         amountOfFilesProcessed.set(0);
+        suspenderH = false;
     }
 
     public void processResultData() {
@@ -66,7 +72,7 @@ public class CovidAnalyzerTool {
     public static void main(String[] args) throws Exception {
         int numeroHilos = 5;
         
-        CovidAnalyzerTool covidAnalyzerTool = new CovidAnalyzerTool();
+        
         //Thread processingThread = new Thread(() -> covidAnalyzerTool.processResultData());
         //processingThread.start();
         
@@ -101,16 +107,23 @@ public class CovidAnalyzerTool {
         while (true) {
             Scanner scanner = new Scanner(System.in);
             String line = scanner.nextLine();
-            if (line.contains("exit"))
+            
+            if (line.contains("exit")){
                 break;
+            }else if(line.isEmpty() && !covidAnalyzerTool.suspenderH){
+                System.out.println("entreeeeeeee");    
+                covidAnalyzerTool.suspenderH=true;
+                for(int i=0;i<listaHilos.size();i++) listaHilos.get(i).suspenderHilo();
+                covidReport(listaHilos);
+            }else if(line.isEmpty() && covidAnalyzerTool.suspenderH){
+                System.out.println("entreeeeeeee222");    
+                covidAnalyzerTool.suspenderH=false;
+                for(int i=0;i<listaHilos.size();i++) listaHilos.get(i).reanudarHilo();
+                covidReport(listaHilos);
+            }
             
-            Set<Result> positivePeople = covidAnalyzerTool.covidResults(listaHilos);
             
-            String message = "Processed %d out of %d files.\nFound %d positive people:\n%s";
-            //Set<Result> positivePeople = covidAnalyzerTool.getPositivePeople();
-            String affectedPeople = positivePeople.stream().map(Result::toString).reduce("", (s1, s2) -> s1 + "\n" + s2);
-            message = String.format(message, covidAnalyzerTool.amountOfFilesProcessed.get(), covidAnalyzerTool.amountOfFilesTotal, positivePeople.size(), affectedPeople);
-            System.out.println(message);
+           
         }
     }
 
@@ -141,7 +154,14 @@ public class CovidAnalyzerTool {
         for (int i=0;i<hilos.size();i++) hilos.get(i).suspenderHilo();
 
     }
-	
+    public static void covidReport(List<CovidThread> listaHilos) {
+
+        String message = "Processed %d out of %d files.\nFound %d positive people:\n%s";
+        Set<Result> positivePeople = covidAnalyzerTool.covidResults(listaHilos);
+        String affectedPeople = positivePeople.stream().map(Result::toString).reduce("", (s1, s2) -> s1 + "\n" + s2);
+        message = String.format(message, covidAnalyzerTool.amountOfFilesProcessed.get(), covidAnalyzerTool.amountOfFilesTotal, positivePeople.size(), affectedPeople);
+        System.out.println(message);
+    }
 
 }
 
