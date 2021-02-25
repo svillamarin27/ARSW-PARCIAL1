@@ -123,7 +123,13 @@ public class CovidAnalyzerTool {
         return amountOfFilesProcessed;
 	}
     private List<File> divideFiles(List<File> divArchivos, int min, int max) {
-        return divArchivos.subList(min, max);
+        if(max == 23){
+            return divArchivos.subList(min, max);
+        }else{
+            return divArchivos.subList(min, max+1);
+        }
+
+        
     }
 	
 
