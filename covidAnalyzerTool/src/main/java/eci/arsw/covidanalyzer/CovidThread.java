@@ -35,33 +35,35 @@ public class CovidThread extends Thread{
     
     @Override
     public void run() {
-        while (suspender) {
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        synchronized (this) {
+            for (File resultFile : this.archivos) {
+                while (suspender) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                List<Result> results = testReader.readResultsFromFile(resultFile);
+                System.out.println("Archivoooooo");
+                for (Result result : results) {
+                    resultAnalyzer.addResult(result);
+                }
+                amountOfFilesProcessed.getAndIncrement();
             }
-        }
-        for (File resultFile : this.archivos) {
-            System.out.println("Archivoooooo");
-            List<Result> results = testReader.readResultsFromFile(resultFile);
-            for (Result result : results) {
-                resultAnalyzer.addResult(result);
-            }
-            amountOfFilesProcessed.getAndIncrement();
         }
     }
 
     public Set<Result> getPositivePeople() {
         return resultAnalyzer.listOfPositivePeople();		
     }
-    public void reanudarHilo() {
+    synchronized void reanudarHilo() {
         suspender = false;
         notify();
 
 	}
 
-    public void suspenderHilo() {
+    synchronized void suspenderHilo() {
         suspender = true;
     }
 }
