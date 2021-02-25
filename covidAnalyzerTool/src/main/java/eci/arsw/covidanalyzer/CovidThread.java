@@ -55,5 +55,13 @@ public class CovidThread extends Thread{
     public Set<Result> getPositivePeople() {
         return resultAnalyzer.listOfPositivePeople();		
     }
-    
+    public void reanudarHilo() {
+        suspender = false;
+        notify();
+
+	}
+
+    public void suspenderHilo() {
+        suspender = true;
+    }
 }

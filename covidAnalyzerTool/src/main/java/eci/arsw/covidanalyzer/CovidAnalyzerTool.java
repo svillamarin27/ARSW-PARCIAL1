@@ -131,6 +131,16 @@ public class CovidAnalyzerTool {
 
         
     }
+    public static void reanudarHilos(List<CovidThread> hilos){
+
+        for (int i=0;i<hilos.size();i++) hilos.get(i).reanudarHilo();
+
+    }
+    public static void suspenderHilos(List<CovidThread> hilos){
+
+        for (int i=0;i<hilos.size();i++) hilos.get(i).suspenderHilo();
+
+    }
 	
 
 }
